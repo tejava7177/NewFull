@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    //h2 데이터베이스 연동
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.h2database:h2'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    //mysql 연동 의존성
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // 테스트 의존성 추가
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // P6Spy 쿼리 파라미터 로그 외부라이브러리 사용
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
+
+}
+
+test {
+    useJUnitPlatform()
+}
