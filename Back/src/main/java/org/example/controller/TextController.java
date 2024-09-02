@@ -13,12 +13,12 @@ public class TextController {
     @Autowired
     private TextService textService;
 
-    @GetMapping
+    @GetMapping("text")
     public Iterable<TextEntry> getAllTextEntry(){
         return textService.getText();
     }
 
-    @PostMapping
+    @PostMapping("post")
     public TextEntry createText(@RequestBody TextEntry textEntry){
         return textService.createText(textEntry);
     }

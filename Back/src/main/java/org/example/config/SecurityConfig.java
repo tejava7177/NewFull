@@ -28,7 +28,7 @@ public class SecurityConfig {
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // CSRF 토큰 쿠키 설정
                 )
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/signup", "/login").permitAll()
+                        .requestMatchers("/api/signup", "/api/posts").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(withDefaults());
