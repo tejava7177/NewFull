@@ -8,12 +8,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,13 +33,13 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity          //가장 중요함.
 @EnableMethodSecurity
-@RequiredArgsConstructor         
+@RequiredArgsConstructor
 public class SecurityConfig  {
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public BCryptPasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
 
     @Bean
@@ -53,15 +59,45 @@ public class SecurityConfig  {
                 .cors(withDefaults()) // Spring Security에서 CORS 지원 사용
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/login", "/api/v1/**").permitAll()
+                        .requestMatchers("/delete/**").hasRole("ADMIN")
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )
-                .formLogin(form -> form.loginPage("/login").permitAll()
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/loginSuccess", true)  // 로그인 성공 시 이동할 URL
+                        .failureUrl("/loginFail")  // 로그인 실패 시 이동할 URL
+                        .permitAll()
                 )
                 .logout(logout -> logout
                         .permitAll());
 
         return http.build();
     }
+
+
+
+    //인메모리 인증 적용
+    @Bean
+    public UserDetailsService users() {
+        // The builder will ensure the passwords are encoded before saving in memory
+        User.UserBuilder users = User.withDefaultPasswordEncoder();
+        UserDetails user = users
+                .username("user")
+                .password("password")
+                .roles("USER")
+                .build();
+        UserDetails admin = users
+                .username("admin")
+                .password("password")
+                .roles("USER", "ADMIN")
+                .build();
+        return new InMemoryUserDetailsManager(user, admin);
+    }
+
+
+
+
+
 
     // CORS 설정을 위한 필터를 명시적으로 추가
 //    public static class SimpleCorsFilter extends OncePerRequestFilter {

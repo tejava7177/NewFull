@@ -11,12 +11,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public void saveUser(UserEntity user) {
-        // 비밀번호 암호화
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-    }
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
+//
+//    public void saveUser(UserEntity user) {
+//        // 비밀번호 암호화
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        userRepository.save(user);
+//    }
 }

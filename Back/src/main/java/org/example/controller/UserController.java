@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private UserService userService;
-
-    @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody UserEntity user) {
-        userService.saveUser(user);
-        return ResponseEntity.ok("회원가입 성공");
-    }
+//
+//    @PostMapping("/signup")
+//    public ResponseEntity<String> signup(@RequestBody UserEntity user) {
+//        userService.saveUser(user);
+//        return ResponseEntity.ok("회원가입 성공");
+//    }
 }
