@@ -4,9 +4,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
@@ -24,6 +26,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 //시큐리티 설정 클래스
 @Configuration
 @EnableWebSecurity          //가장 중요함.
+@EnableMethodSecurity
+@RequiredArgsConstructor         
 public class SecurityConfig  {
 
     @Bean
@@ -48,11 +52,13 @@ public class SecurityConfig  {
                 )
                 .cors(withDefaults()) // Spring Security에서 CORS 지원 사용
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/login").permitAll() // 인증 없이 접근 허용
+                        .requestMatchers("/", "/login", "/api/v1/**").permitAll()
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )
-                .formLogin(formLogin -> formLogin;
-                        //.loginPage("/login"));
+                .formLogin(form -> form.loginPage("/login").permitAll()
+                )
+                .logout(logout -> logout
+                        .permitAll());
 
         return http.build();
     }
