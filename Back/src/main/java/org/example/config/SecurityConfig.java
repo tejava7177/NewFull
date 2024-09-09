@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.example.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,10 +22,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -40,6 +45,10 @@ public class SecurityConfig  {
 //    public BCryptPasswordEncoder passwordEncoder() {
 //        return new BCryptPasswordEncoder();
 //    }
+
+
+    @Autowired
+    private DataSource dataSource; //데이터베이스 연결에 사용할 데이터 소스를 주입 받음.
 
 
     @Bean
@@ -78,7 +87,7 @@ public class SecurityConfig  {
 
     //인메모리 인증 적용
     @Bean
-    public UserDetailsService users() {
+    public UserDetailsService inMemoryUsers() {
         // The builder will ensure the passwords are encoded before saving in memory
         User.UserBuilder users = User.withDefaultPasswordEncoder();
         UserDetails user = users
@@ -95,7 +104,17 @@ public class SecurityConfig  {
     }
 
 
+    // JDBC 기반의 인증 매니저 설정
+    @Bean
+    public UserDetailsManager jdbcUsers(DataSource dataSource) {
+        return new JdbcUserDetailsManager(dataSource);
+    }
 
+
+    @Bean
+    public UserDetailsService userDetailsService(){
+        return new CustomUserDetailsService();
+    }
 
 
 

@@ -9,7 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "users") // 데이터베이스의 'users' 테이블과 매핑
+@Table(name = "CT_USERS123") // 데이터베이스의 'users' 테이블과 매핑
 public class UserEntity {
 
     @Id
